@@ -58,7 +58,7 @@ with open(inp_file_name,'r') as inp_file_handler:
 			temp.append(query[index+1])
 			temp.append(query[index+2])
 			index+=4
-		temp.append(str(len(db_result)))
+		temp.append(str(long(db_result[0][0])))
 		output_training_set.append(temp)
 		gc.collect()
 
