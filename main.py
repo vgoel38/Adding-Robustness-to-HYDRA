@@ -1,16 +1,14 @@
-#Initialization
-#clear ; close all; clc
+from init_params import init_params
 
-#Setting up the parameters
-
-num_attributes = 2
-#for each attribute, first input node represents operator <= and second input node represents operator >=
+# Setting up the parameters
+num_attributes = 4
+# For each attribute, first input node represents operator <= and second input node represents operator >=
 input_layer_size  = 2*num_attributes
 hidden_layer_size = 2*num_attributes
 num_labels = 1
 
 
-# =========== Part 1: Loading and Visualizing Data =============
+# =========== Loading and Visualizing Data =============
 
 # % Load Training Data
 # fprintf('Loading and Visualizing Data ...\n')
@@ -27,44 +25,36 @@ num_labels = 1
 # fprintf('Program paused. Press enter to continue.\n');
 # pause;
 
+# ================ Initializing Parameters ================
 
-# %% ================ Part 2: Loading Parameters ================
-# % In this part of the exercise, we load some pre-initialized 
-# % neural network parameters.
+print('\nInitializing Neural Network Parameters ...\n')
 
-# fprintf('\nLoading Saved Neural Network Parameters ...\n')
+initial_params_1 = init_params(input_layer_size, hidden_layer_size);
+initial_params_2 = init_params(hidden_layer_size, num_labels);
 
-# % Load the weights into variables Theta1 and Theta2
-# load('ex4weights.mat');
+nn_params = []
 
-# % Unroll parameters 
-# nn_params = [Theta1(:) ; Theta2(:)];
+# Unrolling parameters
+for params in initial_params_1:
+    for param in params:
+        nn_params.append(param)
 
-# %% ================ Part 3: Compute Cost (Feedforward) ================
-# %  To the neural network, you should first start by implementing the
-# %  feedforward part of the neural network that returns the cost only. You
-# %  should complete the code in nnCostFunction.m to return cost. After
-# %  implementing the feedforward to compute the cost, you can verify that
-# %  your implementation is correct by verifying that you get the same cost
-# %  as us for the fixed debugging parameters.
-# %
-# %  We suggest implementing the feedforward cost *without* regularization
-# %  first so that it will be easier for you to debug. Later, in part 4, you
-# %  will get to implement the regularized cost.
-# %
-# fprintf('\nFeedforward Using Neural Network ...\n')
+for params in initial_params_2:
+    for param in params:
+        nn_params.append(param)
 
-# % Weight regularization parameter (we set this to 0 here).
-# lambda = 0;
+# ================ Feedforward Phase ================
 
-# J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
-#                    num_labels, X, y, lambda);
+print('\nFeedforward Phase ...\n')
 
-# fprintf(['Cost at parameters (loaded from ex4weights): %f '...
-#          '\n(this value should be about 0.287629)\n'], J);
+# Weight regularization parameter (we set this to 0 here).
+lamda = 0
 
-# fprintf('\nProgram paused. Press enter to continue.\n');
-# pause;
+# J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamda);
+
+# print('Cost at parameters : ' + J)
+
+wait = input("PRESS ENTER TO CONTINUE.")
 
 # %% =============== Part 4: Implement Regularization ===============
 # %  Once your cost function implementation is correct, you should now
@@ -101,21 +91,6 @@ num_labels = 1
 
 # fprintf('Program paused. Press enter to continue.\n');
 # pause;
-
-
-# %% ================ Part 6: Initializing Pameters ================
-# %  In this part of the exercise, you will be starting to implment a two
-# %  layer neural network that classifies digits. You will start by
-# %  implementing a function to initialize the weights of the neural network
-# %  (randInitializeWeights.m)
-
-# fprintf('\nInitializing Neural Network Parameters ...\n')
-
-# initial_Theta1 = randInitializeWeights(input_layer_size, hidden_layer_size);
-# initial_Theta2 = randInitializeWeights(hidden_layer_size, num_labels);
-
-# % Unroll parameters
-# initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
 
 
 # %% =============== Part 7: Implement Backpropagation ===============
