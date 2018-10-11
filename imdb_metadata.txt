@@ -1,0 +1,12 @@
+aka_title:
+425692
+id 1 448814
+kind_id 1 7
+movie_id 0 3398411
+production_year 1875 2022
+movie_companies:
+3691809
+id 1 3691809
+movie_id 2 3398517
+company_id 1 292129
+company_type_id 1 2
