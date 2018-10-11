@@ -27,7 +27,7 @@ query_matrix = []
 cardinality_matrix = []
 
 count = 0
-for line in lines_list[0:5]:
+for line in lines_list:
 	
 	query = [ val for val in line.split() ]
 
