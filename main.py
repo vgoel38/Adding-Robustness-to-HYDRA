@@ -1,4 +1,5 @@
 from init_params import init_params
+from nn_cost_function import nn_cost_function
 import numpy as np
 
 # Setting up the parameters
@@ -43,7 +44,19 @@ print('\nFeedforward Phase ...\n')
 #Weight regularization parameter
 lamda = 1
 
-# J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamda);
+J = nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels, X, Y, lamda);
+
+# print('Cost at parameters : ' + J)
+
+wait = input("PRESS ENTER TO CONTINUE.")
+
+
+
+# ============ Phase 4 : Backpropagation Phase ================
+
+print('\nBackpropagation Phase ...\n')
+
+# grad = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamda);
 
 # print('Cost at parameters : ' + J)
 
