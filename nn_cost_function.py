@@ -1,8 +1,6 @@
 import numpy as np
-# from sigmoid import sigmoid
 import math
-
-# sigmoid = np.vectorize(sigmoid)
+from sigmoid_gradient import sigmoid_gradient
 
 def nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels, X, Y, lamda):
 #Implements the neural network cost function for a two layer neural network
@@ -11,7 +9,7 @@ def nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels,
 	params_1 = nn_params[0:hidden_layer_size * (input_layer_size + 1)]
 	params_1 = (np.reshape(params_1, (input_layer_size + 1, hidden_layer_size))).T
 	params_2 = nn_params[hidden_layer_size * (input_layer_size + 1):]
-	params_2 = (np.reshape(params_2, (-1, hidden_layer_size + 1))).T
+	params_2 = (np.reshape(params_2, (hidden_layer_size + 1, -1))).T
 
 	m = len(X)
 	         
@@ -29,20 +27,40 @@ def nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels,
 	a2 = sigmoid(z2)
 
 	#Adding bias unit in the hidden layer
-
 	a2 = np.insert(a2, 0, 1, axis = 1)
 	h = a2 @ params_2.T
 	h = sigmoid(h)
 
-	# Y = zeros(size(y,1),num_labels); %converting the output values into vectors of size "num_labels"
-	# for i=1:size(y,1),
-	# 	Y(i,y(i,1))=1;
-	# end;
+	J = np.sum(np.square(h - Y))/(2*m)
 
-	# J = sum((Y .* log(h) + (1-Y) .* log(1-h))(:)) * (-1/m); %calculating J
+	#Calculating Jreg
+	params_1_reg = np.square(params_1[:,1::])
+	params_2_reg = np.square(params_2[:,1::])
+	Jreg = (np.sum(params_1_reg) + np.sum(params_2_reg)) * (lamda/(2*m))
+	J = J + Jreg
 
-	# %calculating Jreg
-	# Theta1_reg = (Theta1 .^ 2)(:,[2:size(Theta1,2)]); 
-	# Theta2_reg = (Theta2 .^ 2)(:,[2:size(Theta2,2)]);
-	# Jreg = ( sum(Theta1_reg(:)) + sum(Theta2_reg(:)) ) * ( lambda/(2*m) );
-	# J = J + Jreg;
+
+
+
+	params_1_grad = np.zeros(params_1.shape)
+	params_2_grad = np.zeros(params_2.shape)
+
+	delta_a1 = np.zeros(params_1.shape)
+	delta_a2 = np.zeros(params_2.shape)
+
+	error_h = h - Y
+	error_a2 = np.multiply((error_h @ params_2), np.insert(sigmoid_gradient(z2),0,1,axis=1))
+
+	delta_a2 = delta_a2 + error_h.T @ a2
+	delta_a1 = delta_a1 + (error_a2[:,1::]).T @ X
+
+	params_1_grad = delta_a1/m
+	params_2_grad = delta_a2/m
+
+	params_1_grad[:,1::] += (lamda/m) * params_1[:,1::]
+	params_2_grad[:,1::] += (lamda/m) * params_2[:,1::]
+
+	#Unroll gradients
+	grad = np.concatenate(((params_1_grad.T).ravel(),(params_2_grad.T).ravel()), axis=None)
+
+	return J, grad

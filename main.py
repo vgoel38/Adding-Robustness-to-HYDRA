@@ -1,6 +1,8 @@
 from init_params import init_params
 from nn_cost_function import nn_cost_function
 import numpy as np
+from scipy.optimize import minimize
+import sys
 
 # Setting up the parameters
 num_attributes = 4
@@ -16,6 +18,7 @@ print('Loading and Visualizing Data ...\n')
 
 X = np.loadtxt('table_aka_title/aka_title_input.txt', delimiter=' ')
 Y = np.loadtxt('table_aka_title/aka_title_output.txt')
+Y = np.reshape(Y,(-1,1))
 #size of training data
 m = len(X)
 
@@ -27,8 +30,8 @@ wait = input("PRESS ENTER TO CONTINUE.")
 
 print('\nInitializing Neural Network Parameters ...\n')
 
-initial_params_1 = init_params(input_layer_size, hidden_layer_size);
-initial_params_2 = init_params(hidden_layer_size, num_labels);
+initial_params_1 = init_params(input_layer_size, hidden_layer_size)
+initial_params_2 = init_params(hidden_layer_size, num_labels)
 
 #Unrolling into a single vector of parameters
 nn_params = np.concatenate(((initial_params_1.T).ravel(),(initial_params_2.T).ravel()), axis=None)
@@ -44,52 +47,36 @@ print('\nFeedforward Phase ...\n')
 #Weight regularization parameter
 lamda = 1
 
-J = nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels, X, Y, lamda);
-
-# print('Cost at parameters : ' + J)
+J, grad = nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels, X, Y, lamda)
 
 wait = input("PRESS ENTER TO CONTINUE.")
 
 
-
-# ============ Phase 4 : Backpropagation Phase ================
-
-print('\nBackpropagation Phase ...\n')
-
-# grad = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamda);
-
-# print('Cost at parameters : ' + J)
-
-wait = input("PRESS ENTER TO CONTINUE.")
-
-
-# %% ========= Phase 4: Training NN ===================
+# ========= Phase 4: Training NN ===================
 
 print('\nTraining Neural Network... \n')
 
-# %  After you have completed the assignment, change the MaxIter to a larger
-# %  value to see how more training helps.
-# options = optimset('MaxIter', 50);
+options = {'maxiter': 50}
 
-# % Create "short hand" for the cost function to be minimized
-# costFunction = @(p) nnCostFunction(p, ...
-#                                    input_layer_size, ...
-#                                    hidden_layer_size, ...
-#                                    num_labels, X, y, lambda);
+result = minimize(nn_cost_function, nn_params, jac=True, args = (input_layer_size, hidden_layer_size, num_labels, X, Y, lamda), options=options)
 
-# % Now, costFunction is a function that takes in only one argument (the
-# % neural network parameters)
-# [nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
+#Reshaping nn_params back into the parameters params_1 and params_2
+params_1 = (result.x)[0:hidden_layer_size * (input_layer_size + 1)]
+params_1 = (np.reshape(params_1, (input_layer_size + 1, hidden_layer_size))).T
+params_2 = (result.x)[hidden_layer_size * (input_layer_size + 1):]
+params_2 = (np.reshape(params_2, (hidden_layer_size + 1, -1))).T
 
-# % Obtain Theta1 and Theta2 back from nn_params
-# Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
-#                  hidden_layer_size, (input_layer_size + 1));
+sys.stdout = open('table_aka_title/aka_title_params_1.txt','w')
+for val in params_1:
+    print(*val)
 
-# Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
-#                  num_labels, (hidden_layer_size + 1));
+sys.stdout = open('table_aka_title/aka_title_params_2.txt','w')
+for val in params_2:
+    print(*val)
 
-# fprintf('Program paused. Press enter to continue.\n');
-# pause;
+sys.stdout = sys.__stdout__
+
+wait = input("PRESS ENTER TO CONTINUE.")
 
 
 

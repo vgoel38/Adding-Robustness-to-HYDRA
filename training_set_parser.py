@@ -2,6 +2,7 @@
 #generates training data (input and output files) compatible with the neural network
 
 import sys
+import numpy as np
 
 #specifics of a particular table
 table = 'aka_title'
@@ -16,6 +17,9 @@ num_attr = 4
 #taken from imdb_metadata
 attr_min = [1, 0, 1, 1875]
 attr_max = [448814, 3398411, 7, 2022]
+attr_mean = [225663.8669, 2719468.9869, 1.4492, 1979.2816]
+attr_std_dev = [129202.72131414482, 570356.5690264079, 1.0761451205083215, 29.013729507485998]
+table_card = 425692
 
 input = open(input_file, 'r')
 lines_list = input.readlines()
@@ -49,13 +53,13 @@ for line in lines_list:
 			type_val = 'op'
 		elif type_val == 'op':
 			if val == '<=':
-				attr_index = attr_index*2
+				node_index = attr_index*2
 			else:
-				attr_index = attr_index*2 + 1
+				node_index = attr_index*2 + 1
 			type_val = 'val'
 		else:
-			query_matrix[count][attr_index] = val
-			is_attr_set[attr_index] = 1
+			query_matrix[count][node_index] = val
+			is_attr_set[node_index] = 1
 			type_val = 'attr'
 
 	#setting min and max values of the absent filter predicates
@@ -63,11 +67,20 @@ for line in lines_list:
 	for val in query_matrix[count]:
 		if is_attr_set[i] == 0:
 			if i%2 == 0:
-				query_matrix[count][i] = attr_max[(int)(i/2)]
+				query_matrix[count][i] = attr_max[int(i/2)]
 			else:
-				query_matrix[count][i] = attr_min[(int)((i-1)/2)]
-				#print(type((i-1)/2))
+				query_matrix[count][i] = attr_min[int((i-1)/2)]
 		i += 1
+
+	#Standardizing the input
+	i=0
+	for val in query_matrix[count]:
+		if i%2 == 0:
+			query_matrix[count][i] = (int(query_matrix[count][i]) - attr_min[int(i/2)])/(attr_max[int(i/2)] - attr_min[int(i/2)])
+		else:
+			query_matrix[count][i] = (attr_min[int((i-1)/2)] - int(query_matrix[count][i]))/(attr_max[int((i-1)/2)] - attr_min[int((i-1)/2)])
+		i += 1
+
 
 	#setting output cardinality of the present query 
 	cardinality_matrix.append(query[len(query)-1])
@@ -83,5 +96,10 @@ for val in query_matrix:
 sys.stdout = open(output_cardinality_matrix_file,'w')
 
 #building the output training set
+table_card = np.log(table_card)
 for val in cardinality_matrix:
-	print(val)
+	val = int(val)
+	if val == 0:
+		print(val)
+	else:
+		print(np.log(val)/table_card)
