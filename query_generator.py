@@ -9,9 +9,10 @@ file_handler = open(output_file,'w')
 query_init = 'select count(*) from ' + tablename + ' ' + table_nickname + ' ' + 'where '
 query_no = 1
 for no_of_col in range(1,len(table_columns)+1):
+	print 'generating query no', query_no
 	for i in range(len(table_columns)-no_of_col+1):
 		#print i
-		for j in range(100000000):
+		for j in range(100000):
 			query_final = ''
 			col_no = i
 			iter_no = 0
@@ -23,8 +24,7 @@ for no_of_col in range(1,len(table_columns)+1):
 					query_final = query_final + ' and '
 				query_final = query_final + table_nickname + '.' + table_columns[col_no] + ' ' + operator_list[rand_op] + ' ' + str(rand_val);
 				col_no = col_no + 1
-			query = query_init + query_final + ' ;'
-			print 'generating query no', query_no 
+			query = query_init + query_final + ' ;' 
 			file_handler.write(query + '\n')
 			query_no = query_no + 1
 file_handler.close()
