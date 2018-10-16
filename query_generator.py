@@ -12,13 +12,21 @@ for no_of_col in range(1,len(table_columns)+1):
 	print 'generating query no', query_no
 	for i in range(len(table_columns)-no_of_col+1):
 		#print i
-		for j in range(100000):
+		#get maximum range of a column among cosidered columns in this pass
+		col_no = i
+		max_range = 0
+		while col_no < i + no_of_col:
+			curr_range = table_columns_ranges[2*col_no+1] - table_columns_ranges[2*col_no] + 1
+			if max_range < curr_range:
+				max_range = curr_range
+			col_no = col_no + 1
+		for j in range(min(10000,max_range)):
 			query_final = ''
 			col_no = i
 			iter_no = 0
 			while(col_no < i + no_of_col):
 				iter_no = iter_no + 1
-				rand_val = random.randint(table_columns_ranges[2*col_no],table_columns_ranges[2*col_no+1])
+				rand_val = random.randint(table_columns_ranges[2*col_no] - 1,table_columns_ranges[2*col_no+1] + 1)
 				rand_op = random.randint(0,1)
 				if iter_no != 1:
 					query_final = query_final + ' and '
