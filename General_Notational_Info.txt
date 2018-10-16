@@ -1,11 +1,11 @@
 #Imdb_metadata format
 tablename:
 cardinality
-col_name min_val max_val
+col_name min_val max_val mean std.deviation
 .
 .
 .
 table_name:
 cardinality
-col_name min_val max_val
+col_name min_val max_val mean std.deviation
 
