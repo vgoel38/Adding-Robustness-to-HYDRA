@@ -63,4 +63,6 @@ def nn_cost_function(nn_params, input_layer_size, hidden_layer_size, num_labels,
 	#Unroll gradients
 	grad = np.concatenate(((params_1_grad.T).ravel(),(params_2_grad.T).ravel()), axis=None)
 
+	print(J)
+
 	return J, grad
