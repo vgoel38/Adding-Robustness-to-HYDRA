@@ -21,8 +21,6 @@ def main(table, X, Y, hidden_layer_size, lamda, params_1_file, params_2_file):
 
   # ========= Training NN ===================
 
-  # options = {'maxiter': 50}
-
   result = minimize(nn_cost_function, nn_params, jac=True, args = (input_layer_size, hidden_layer_size, num_labels, X, Y, lamda))
 
   #Reshaping nn_params back into the parameters params_1 and params_2

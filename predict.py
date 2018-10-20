@@ -35,7 +35,9 @@ def predict(table,X,Y_norm,Y_unnorm, params_1_file, params_2_file, pred_file, ta
 
 	sys.stdout = open(pred_file,'w')
 	h = np.reshape(h,(-1,1))
+	h=h.astype(int)
 	Y_unnorm = np.reshape(Y_unnorm,(-1,1))
+	Y_unnorm=Y_unnorm.astype(int)
 	h = np.append(Y_unnorm,h,axis=1)
 	for val in h:
 		print(*val)
@@ -45,11 +47,11 @@ def predict(table,X,Y_norm,Y_unnorm, params_1_file, params_2_file, pred_file, ta
 	return cost_norm, cost_unnorm
 
 if __name__ == "__main__":
-	# table = 'movie_companies'
-	# table_card = 3691809
+	table = 'movie_companies'
+	table_card = 3691809
 
-	table = 'aka_title'
-	table_card = 425692
+	# table = 'aka_title'
+	# table_card = 425692
 
 	test_input_file = 'table_'+table+'/'+table+'_test_input.txt'
 	test_output_norm_file = 'table_'+table+'/'+table+'_test_output_normalised.txt'
